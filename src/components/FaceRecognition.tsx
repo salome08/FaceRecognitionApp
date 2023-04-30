@@ -1,39 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Canvas, RootState, useFrame, useThree } from "@react-three/fiber";
 import { JEELIZFACEFILTER, NN_DEFAULT } from "facefilter";
 import * as THREE from "three";
-import { JeelizThreeFiberHelper } from "../js/helpers/JeelizThreeFiberHelper.js";
 import { IJeelizFaceFilterInitParams } from "../js/helpers/JeelizFaceFilterInterfaces";
-import { Container } from "./Layout/Container";
-import { Row } from "./Layout/Row";
-import { Item } from "./Layout/Item";
-import PicturesList, { addPictureToList } from "./PicturesList";
+import { JeelizThreeFiberHelper } from "../js/helpers/JeelizThreeFiberHelper.js";
+import { FaceCanvasProps, FacePictureProps, Sizing } from "../shared/types";
+import * as colors from "../shared/colors";
+import { orientations } from "../shared/constants";
 import {
-  handleResize,
   computeSizing,
   getFaceOrientation,
+  handleResize,
 } from "../utils/functions";
 import CanvasDirections from "./CanvasDirections";
 import FaceFollower3D from "./FaceFollower3D";
-
-const orientations = ["front", "left", "right", "up", "down"];
-
-type Sizing = {
-  width: number;
-  height: number;
-};
-
-interface FaceCanvasProps {
-  sizing: Sizing;
-  faceFilterCanvasRef: React.RefObject<HTMLCanvasElement>;
-  faceOrientation: string;
-  facePictures: FacePictures[];
-}
-
-interface FacePictures {
-  orientation: string;
-  img: string;
-}
+import { Container } from "./Layout/Container";
+import { Item } from "./Layout/Item";
+import { Row } from "./Layout/Row";
+import PicturesList, { addPictureToList } from "./PicturesList";
+import "../App.css";
 
 const _maxFacesDetected: number = 1;
 const _faceFollowers = new Array<THREE.Object3D>(_maxFacesDetected);
@@ -88,7 +73,9 @@ const FaceCanvas = (props: FaceCanvasProps) => {
             borderRadius: "10em",
             zIndex: 1,
             boxShadow: `0 0 21px 2px ${
-              faceOrientation === "NOT_DETECTED" ? "#1976d2" : "black"
+              faceOrientation === "NOT_DETECTED"
+                ? colors.primaryColor
+                : colors.black
             }`,
             ...sizing,
           }}
@@ -107,7 +94,7 @@ export default function FaceRecognition() {
   const [indicationToPerform, setIndicationToPerform] = useState(
     "Start to look at the camera"
   );
-  const [facePictures, setFacePictures] = useState<FacePictures[]>(
+  const [facePictures, setFacePictures] = useState<FacePictureProps[]>(
     orientations.map((orientation) => {
       return { orientation, img: "" };
     })
@@ -120,28 +107,34 @@ export default function FaceRecognition() {
     if (!_timerResize) {
       JEELIZFACEFILTER.resize();
     }
-  }, [sizing]);
-
-  const userIndicationToPerform = () => {
-    if (facePictures.every((pic) => pic.img === ""))
-      return "Start to look at the camera";
-    for (const pic of facePictures) {
-      if (pic.img === "") return `Then, look ${pic.orientation}`;
-    }
-  };
+  }, [sizing, _timerResize]);
 
   // Take pictures for different positions
   useEffect(() => {
+    const userIndicationToPerform = () => {
+      if (facePictures.every((pic) => pic.img === ""))
+        return "Start to look at the camera";
+      for (const pic of facePictures) {
+        if (pic.img === "") return `Then, look ${pic.orientation}`;
+      }
+    };
+
     if (facePictures.some((pic) => pic.img === "")) {
+      // Display a message to the user to indicate the next action to take
       const indication = userIndicationToPerform();
       setIndicationToPerform(indication as string);
+
+      // Take a picture of the user's face and add it to the list
       addPictureToList({
         facePictures,
         faceOrientation,
         faceFilterCanvasRef,
         setFacePictures,
       });
-    } else setIndicationToPerform("Thank you");
+    } else {
+      // Display a thank you message when all pictures have been taken
+      setIndicationToPerform("Thank you for taking all pictures!");
+    }
   }, [faceOrientation, facePictures]);
 
   // FaceFilter Init
@@ -182,41 +175,19 @@ export default function FaceRecognition() {
       },
     } as IJeelizFaceFilterInitParams);
     return JEELIZFACEFILTER.destroy;
-  }, [isInitialized]);
+  }, [isInitialized, _timerResize]);
 
   return (
     <Container>
-      <Row
-        style={{
-          fontSize: "x-large",
-          fontWeight: "bold",
-          color: "#1976d285",
-        }}
-      >
-        Scanning...
-      </Row>
-
+      <Row className="Heading">Scanning...</Row>
       <FaceCanvas
         faceFilterCanvasRef={faceFilterCanvasRef}
         sizing={sizing}
         faceOrientation={faceOrientation}
         facePictures={facePictures}
       />
-      <Row
-        style={{
-          fontSize: "x-large",
-          fontWeight: "bold",
-          color: "#1976d285",
-        }}
-      >
-        {indicationToPerform}
-      </Row>
-      <Row
-        style={{
-          fontSize: "large",
-          color: "gray",
-        }}
-      >
+      <Row className="Heading">{indicationToPerform}</Row>
+      <Row className="SubHeading">
         Wait for the picture to be taken automatially
       </Row>
       <Row>

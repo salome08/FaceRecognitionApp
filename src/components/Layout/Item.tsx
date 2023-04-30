@@ -8,6 +8,7 @@ interface ItemProps {
   sx?: React.CSSProperties;
   alignItems?: string;
   justifyContent?: string;
+  className?: string;
 }
 
 export const Item = (props: ItemProps) => {

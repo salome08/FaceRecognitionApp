@@ -1,6 +1,7 @@
-import React, { useRef, useMemo, MutableRefObject } from "react";
+import React, { MutableRefObject, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import * as colors from "../shared/colors";
 
 interface CustomGeometryParticlesProps {
   count: number;
@@ -60,7 +61,7 @@ const CustomGeometryParticles = (props: CustomGeometryParticlesProps) => {
       </bufferGeometry>
       <pointsMaterial
         size={0.05}
-        color="#5786F5"
+        color={colors.primaryColor}
         sizeAttenuation
         depthWrite={false}
       />

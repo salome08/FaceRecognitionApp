@@ -8,6 +8,7 @@ interface ContainerProps {
   alignItems?: string;
   style?: React.CSSProperties;
   rowGap?: number;
+  className?: string;
 }
 
 export const Container = (props: ContainerProps) => {

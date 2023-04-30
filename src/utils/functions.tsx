@@ -1,4 +1,5 @@
 import { IJeelizFaceFilterDetectState } from "../js/helpers/JeelizFaceFilterInterfaces";
+import { Sizing } from "../shared/types";
 
 export const computeSizing = () => {
   // compute  size of the canvas:
@@ -13,15 +14,7 @@ export const computeSizing = () => {
       : wWidth / 3.5;
   const height = width;
 
-  // compute position of the canvas:
-  const top = 0;
-  return { width, height, top };
-};
-
-type Sizing = {
-  width: number;
-  height: number;
-  top: number;
+  return { width, height };
 };
 
 const doResize = (

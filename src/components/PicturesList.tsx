@@ -1,25 +1,16 @@
 import React from "react";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-import { Row } from "./Layout/Row";
-import { Item } from "./Layout/Item";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { AddPictureToListProps, FacePictureProps } from "../shared/types";
+import * as colors from "../shared/colors";
+import { orientations } from "../shared/constants";
 import { captureCanvas } from "../utils/functions";
+import { Item } from "./Layout/Item";
+import { Row } from "./Layout/Row";
+import "../App.css";
 
-interface FacePictures {
-  orientation: string;
-  img: string;
-}
-
-interface addPictureToListProps {
-  facePictures: FacePictures[];
-  faceOrientation: string;
-  faceFilterCanvasRef: React.RefObject<HTMLCanvasElement>;
-  setFacePictures: React.Dispatch<React.SetStateAction<FacePictures[]>>;
-}
-const orientations = ["front", "left", "right", "up", "down"];
-
-export const addPictureToList = (props: addPictureToListProps) => {
+export const addPictureToList = (props: AddPictureToListProps) => {
   const {
     facePictures,
     faceOrientation,
@@ -35,7 +26,7 @@ export const addPictureToList = (props: addPictureToListProps) => {
         faceOrientation === orientation
       )
         setTimeout(() => {
-          setFacePictures((prevState: FacePictures[]) => [
+          setFacePictures((prevState: FacePictureProps[]) => [
             ...prevState.filter((pic) => pic.orientation !== orientation),
             {
               orientation: orientation,
@@ -47,7 +38,7 @@ export const addPictureToList = (props: addPictureToListProps) => {
   });
 };
 
-const PicturesList: React.FC<{ facePictures: FacePictures[] }> = ({
+const PicturesList: React.FC<{ facePictures: FacePictureProps[] }> = ({
   facePictures,
 }) => {
   return (
@@ -55,7 +46,7 @@ const PicturesList: React.FC<{ facePictures: FacePictures[] }> = ({
       {facePictures.map((item) => (
         <ImageListItem
           key={item.orientation}
-          sx={{ justifyContent: "center", background: "white" }}
+          sx={{ justifyContent: "center", background: colors.white }}
         >
           {item.img ? (
             <img
@@ -66,16 +57,10 @@ const PicturesList: React.FC<{ facePictures: FacePictures[] }> = ({
             />
           ) : (
             <Row>
-              <Item
-                sx={{
-                  textAlign: "center",
-                  color: "gray",
-                  fontWeight: "lighter",
-                }}
-              >
+              <Item className="PicTitle">
                 Turn your head {item.orientation}
               </Item>
-              <PhotoCameraIcon sx={{ color: "gray" }} />
+              <PhotoCameraIcon sx={{ color: colors.secondaryColor }} />
             </Row>
           )}
         </ImageListItem>

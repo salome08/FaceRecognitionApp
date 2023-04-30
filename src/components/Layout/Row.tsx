@@ -10,6 +10,7 @@ interface RowProps {
   alignItems?: string;
   justifyContent?: string;
   flexWrap?: any;
+  className?: string;
 }
 
 export const Row = (props: RowProps) => {

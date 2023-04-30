@@ -1,32 +1,18 @@
 import React from "react";
-import { Container } from "./Layout/Container";
-import { Row } from "./Layout/Row";
-import { Item } from "./Layout/Item";
 import {
   KeyboardArrowDown,
   KeyboardArrowLeft,
   KeyboardArrowRight,
   KeyboardArrowUp,
 } from "@mui/icons-material";
-
-interface FacePictures {
-  orientation: string;
-  img: string;
-}
-
-interface FaceCanvasProps {
-  sizing: { height: number; width: number };
-  faceOrientation: string;
-  children: React.ReactNode;
-  facePictures: { orientation: string; img: string }[];
-}
-
-interface CurrentFacePositionProps {
-  icon: React.ReactElement;
-  faceOrientation: string;
-  position: string;
-  facePictures: FacePictures[];
-}
+import {
+  CanvasDirectionsProps,
+  CurrentFacePositionProps,
+} from "../shared/types";
+import * as colors from "../shared/colors";
+import { Container } from "./Layout/Container";
+import { Item } from "./Layout/Item";
+import { Row } from "./Layout/Row";
 
 const CurrentFacePosition = (props: CurrentFacePositionProps) => {
   const { faceOrientation, position, facePictures, icon } = props;
@@ -56,7 +42,7 @@ const CurrentFacePosition = (props: CurrentFacePositionProps) => {
         {React.cloneElement(icon, {
           fontSize: faceOrientation === position ? "large" : "medium",
           style: {
-            color: pictureTaken ? "#1976d2" : "gray",
+            color: pictureTaken ? colors.primaryColor : colors.secondaryColor,
           },
         })}
       </Row>
@@ -64,7 +50,7 @@ const CurrentFacePosition = (props: CurrentFacePositionProps) => {
   );
 };
 
-const CanvasDirections = (props: FaceCanvasProps) => {
+const CanvasDirections = (props: CanvasDirectionsProps) => {
   const { sizing, faceOrientation, children, facePictures } = props;
 
   return (
